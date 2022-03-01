@@ -29,3 +29,5 @@ database
 /conf/app.conf
 /vendor
 /runtime
+
+build

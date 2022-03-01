@@ -310,7 +310,7 @@ func ResolveCommand(args []string) {
 
 	if conf.ConfigurationFile == "" {
 		conf.ConfigurationFile = conf.WorkingDir("conf", "app.conf")
-		config := conf.WorkingDir("conf", "app.conf.example")
+		config := conf.WorkingDir("conf", "app.example.conf")
 		if !filetil.FileExists(conf.ConfigurationFile) && filetil.FileExists(config) {
 			_ = filetil.CopyFile(conf.ConfigurationFile, config)
 		}

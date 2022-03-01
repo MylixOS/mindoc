@@ -20,7 +20,7 @@ before_install:
 
 script:
   - go build -o mindoc_linux_amd64 -ldflags "-w"
-  - cp conf/app.conf.example conf/app.conf
+  - cp conf/app.example.conf conf/app.conf
   - ./mindoc_linux_amd64 version
   - rm conf/app.conf
 
@@ -31,7 +31,7 @@ before_deploy:
   # remove dirs
   - rm -rf cache commands controllers converter .git .github graphics mail models routers utils
   - ls -alh
-  - cp conf/app.conf.example conf/app.conf
+  - cp conf/app.example.conf conf/app.conf
   - zip -r mindoc_linux_amd64.zip conf static uploads views lib mindoc_linux_amd64 favicon.ico LICENSE.md
 
 deploy:
