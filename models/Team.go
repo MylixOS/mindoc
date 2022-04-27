@@ -64,7 +64,7 @@ func (t *Team) Delete(id int) (err error) {
 	o, err := ormer.Begin()
 
 	if err != nil {
-		logs.Error("开启事物时出错 ->", err)
+		logs.Error("开启事务时出错 ->", err)
 		return
 	}
 	_, err = o.QueryTable(t.TableNameWithPrefix()).Filter("team_id", id).Delete()
