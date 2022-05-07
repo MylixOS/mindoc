@@ -25,6 +25,7 @@ import (
 	"github.com/beego/beego/v2/server/web"
 	"github.com/beego/i18n"
 	"github.com/howeyc/fsnotify"
+	_ "github.com/lib/pq"
 	"github.com/lifei6671/gocaptcha"
 	"github.com/mindoc-org/mindoc/cache"
 	"github.com/mindoc-org/mindoc/conf"
@@ -58,6 +59,32 @@ func RegisterDataBase() {
 		dataSource := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=true&loc=%s", username, password, host, port, database, url.QueryEscape(timezone))
 
 		if err := orm.RegisterDataBase("default", "mysql", dataSource); err != nil {
+			logs.Error("注册默认数据库失败->", err)
+			os.Exit(1)
+		}
+
+	} else if strings.EqualFold(dbadapter, "postgres") {
+
+		host, _ := web.AppConfig.String("db_host")
+		database, _ := web.AppConfig.String("db_database")
+		username, _ := web.AppConfig.String("db_username")
+		password, _ := web.AppConfig.String("db_password")
+
+		timezone, _ := web.AppConfig.String("timezone")
+		location, err := time.LoadLocation(timezone)
+		if err == nil {
+			orm.DefaultTimeLoc = location
+		} else {
+			logs.Error("加载时区配置信息失败,请检查是否存在 ZONEINFO 环境变量->", err)
+		}
+
+		port, _ := web.AppConfig.String("db_port")
+
+		// dataSource := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=true&loc=%s", username, password, host, port, database, url.QueryEscape(timezone))
+
+		dataSource := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", username, password, host, port, database)
+
+		if err := orm.RegisterDataBase("default", "postgres", dataSource); err != nil {
 			logs.Error("注册默认数据库失败->", err)
 			os.Exit(1)
 		}

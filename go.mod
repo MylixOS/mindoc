@@ -12,7 +12,7 @@ require (
 	github.com/bradfitz/gomemcache v0.0.0-20190913173617-a41fca850d0b // indirect
 	github.com/howeyc/fsnotify v0.9.0
 	github.com/kardianos/service v1.1.0
-	github.com/lib/pq v1.7.0 // indirect
+	github.com/lib/pq v1.10.5 // indirect
 	github.com/lifei6671/gocaptcha v0.1.1
 	github.com/mattn/go-runewidth v0.0.13
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible

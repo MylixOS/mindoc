@@ -139,6 +139,10 @@ func ExportDatabaseTable() ([]string, error) {
 			}
 			break
 		}
+	case "postgres":
+		{
+			// todo
+		}
 	case "sqlite3":
 		{
 			var results []orm.Params

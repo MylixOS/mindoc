@@ -5,6 +5,7 @@ import (
 	"crypto/md5"
 	"errors"
 	"fmt"
+	"github.com/mindoc-org/mindoc/utils/sqltil"
 	"io"
 	"io/ioutil"
 	"os"
@@ -410,7 +411,7 @@ FROM md_books AS book
   LEFT JOIN md_relationship AS rel1 ON book.book_id = rel1.book_id AND rel1.role_id = 0
   LEFT JOIN md_members AS m ON rel1.member_id = m.member_id
 WHERE rel.role_id >= 0 or team.role_id >= 0
-ORDER BY book.order_index, book.book_id DESC limit ?,?`
+ORDER BY book.order_index, book.book_id DESC ` + sqltil.DBSpecificLimitOffset(o.Driver().Type())
 
 	_, err = o.Raw(sql2, memberId, memberId, offset, pageSize).QueryRows(&books)
 	if err != nil {
@@ -550,7 +551,7 @@ WHERE book.privately_owned = 0 or rel.role_id >=0 or team.role_id >=0`
 as t group by book_id) as team on team.book_id=book.book_id
   LEFT JOIN md_relationship AS rel1 ON rel1.book_id = book.book_id AND rel1.role_id = 0
   LEFT JOIN md_members AS member ON rel1.member_id = member.member_id
-WHERE book.privately_owned = 0 or rel.role_id >=0 or team.role_id >=0 ORDER BY order_index desc,book.book_id DESC LIMIT ?,?`
+WHERE book.privately_owned = 0 or rel.role_id >=0 or team.role_id >=0 ORDER BY order_index desc,book.book_id DESC` + sqltil.DBSpecificLimitOffset(o.Driver().Type())
 
 		_, err = o.Raw(sql2, memberId, memberId, offset, pageSize).QueryRows(&books)
 
@@ -566,7 +567,7 @@ WHERE book.privately_owned = 0 or rel.role_id >=0 or team.role_id >=0 ORDER BY o
 		sql := `SELECT book.*,rel.*,member.account AS create_name,member.real_name FROM md_books AS book
 			LEFT JOIN md_relationship AS rel ON rel.book_id = book.book_id AND rel.role_id = 0
 			LEFT JOIN md_members AS member ON rel.member_id = member.member_id
-			WHERE book.privately_owned = 0 ORDER BY order_index DESC ,book.book_id DESC LIMIT ?,?`
+			WHERE book.privately_owned = 0 ORDER BY order_index DESC ,book.book_id DESC ` + sqltil.DBSpecificLimitOffset(o.Driver().Type())
 
 		_, err = o.Raw(sql, offset, pageSize).QueryRows(&books)
 
@@ -604,7 +605,7 @@ WHERE (relationship_id > 0 OR book.privately_owned = 0 or team.team_member_id > 
 			LEFT JOIN md_relationship AS rel1 ON rel1.book_id = book.book_id AND rel1.role_id = 0
 			LEFT JOIN md_members AS member ON rel1.member_id = member.member_id
 			WHERE (rel.relationship_id > 0 OR book.privately_owned = 0 or team.team_member_id > 0) 
-			AND book.label LIKE ? ORDER BY order_index DESC ,book.book_id DESC LIMIT ?,?`
+			AND book.label LIKE ? ORDER BY order_index DESC ,book.book_id DESC ` + sqltil.DBSpecificLimitOffset(o.Driver().Type())
 
 		_, err = o.Raw(sql2, memberId, memberId, keyword, offset, pageSize).QueryRows(&books)
 
@@ -622,7 +623,7 @@ WHERE (relationship_id > 0 OR book.privately_owned = 0 or team.team_member_id > 
 		sql := `SELECT book.*,rel.*,member.account AS create_name FROM md_books AS book
 			LEFT JOIN md_relationship AS rel ON rel.book_id = book.book_id AND rel.role_id = 0
 			LEFT JOIN md_members AS member ON rel.member_id = member.member_id
-			WHERE book.privately_owned = 0 AND book.label LIKE ? ORDER BY order_index DESC ,book.book_id DESC LIMIT ?,?`
+			WHERE book.privately_owned = 0 AND book.label LIKE ? ORDER BY order_index DESC ,book.book_id DESC ` + sqltil.DBSpecificLimitOffset(o.Driver().Type())
 
 		_, err = o.Raw(sql, keyword, offset, pageSize).QueryRows(&books)
 

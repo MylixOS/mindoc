@@ -291,6 +291,7 @@ func (c *ManagerController) Books() {
 	books, totalCount, err := models.NewBookResult().FindToPager(pageIndex, conf.PageSize)
 
 	if err != nil {
+		c.Data["ErrorCode"] = 500
 		c.Abort("500")
 	}
 
