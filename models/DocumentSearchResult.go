@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/mindoc-org/mindoc/utils/sqltil"
 	"time"
 
 	"strings"
@@ -95,8 +96,7 @@ WHERE book.privately_owned = 0 AND (book.book_name LIKE ? OR book.description LI
          LEFT JOIN md_members AS member ON blog.member_id = member.member_id
        WHERE blog.blog_status = 'public' AND (blog.blog_release LIKE ? OR blog.blog_title LIKE ?)
      ) AS union_table
-ORDER BY create_time DESC
-LIMIT ?, ?;`
+ORDER BY create_time DESC ` + sqltil.DBSpecificLimitOffset(o.Driver().Type()) + ";"
 
 		err = o.Raw(sql1, keyword, keyword).QueryRow(&totalCount)
 		if err != nil {
@@ -223,8 +223,7 @@ FROM (
        WHERE (blog.blog_status = 'public' OR blog.member_id = ?) AND blog.blog_type = 0 AND
              (blog.blog_release LIKE ? OR blog.blog_title LIKE ?)
      ) AS union_table
-ORDER BY create_time DESC
-LIMIT ?, ?;`
+ORDER BY create_time DESC ` + sqltil.DBSpecificLimitOffset(o.Driver().Type()) + ";"
 
 		err = o.Raw(sql1, memberId, memberId, keyword, keyword).QueryRow(&totalCount)
 		if err != nil {

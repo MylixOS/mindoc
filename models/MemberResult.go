@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/mindoc-org/mindoc/utils/sqltil"
 	"time"
 
 	"github.com/beego/beego/v2/client/orm"
@@ -72,7 +73,7 @@ func (m *MemberRelationshipResult) FindForUsersByBookId(lang string, bookId, pag
 
 	var members []*MemberRelationshipResult
 
-	sql1 := "SELECT * FROM md_relationship AS rel LEFT JOIN md_members as member ON rel.member_id = member.member_id WHERE rel.book_id = ? ORDER BY rel.relationship_id DESC  LIMIT ?,?"
+	sql1 := "SELECT * FROM md_relationship AS rel LEFT JOIN md_members as member ON rel.member_id = member.member_id WHERE rel.book_id = ? ORDER BY rel.relationship_id DESC   " + sqltil.DBSpecificLimitOffset(o.Driver().Type())
 
 	sql2 := "SELECT count(*) AS total_count FROM md_relationship AS rel LEFT JOIN md_members as member ON rel.member_id = member.member_id WHERE rel.book_id = ?"
 
@@ -102,7 +103,7 @@ func (m *MemberRelationshipResult) FindForUsersByBookId(lang string, bookId, pag
 func (m *MemberRelationshipResult) FindNotJoinUsersByAccount(bookId, limit int, account string) ([]*Member, error) {
 	o := orm.NewOrm()
 
-	sql := "SELECT m.* FROM md_members as m LEFT JOIN md_relationship as rel ON m.member_id=rel.member_id AND rel.book_id = ? WHERE rel.relationship_id IS NULL AND m.account LIKE ? LIMIT 0,?;"
+	sql := "SELECT m.* FROM md_members as m LEFT JOIN md_relationship as rel ON m.member_id=rel.member_id AND rel.book_id = ? WHERE rel.relationship_id IS NULL AND m.account LIKE ? LIMIT ?;"
 
 	var members []*Member
 
@@ -115,7 +116,7 @@ func (m *MemberRelationshipResult) FindNotJoinUsersByAccount(bookId, limit int, 
 func (m *MemberRelationshipResult) FindNotJoinUsersByAccountOrRealName(bookId, limit int, keyWord string) ([]*Member, error) {
 	o := orm.NewOrm()
 
-	sql := "SELECT m.* FROM md_members as m LEFT JOIN md_relationship as rel ON rel.member_id = m.member_id AND rel.book_id = ? WHERE rel.relationship_id IS NULL AND (m.real_name LIKE ? OR m.account LIKE ?) LIMIT 0,?;"
+	sql := "SELECT m.* FROM md_members as m LEFT JOIN md_relationship as rel ON rel.member_id = m.member_id AND rel.book_id = ? WHERE rel.relationship_id IS NULL AND (m.real_name LIKE ? OR m.account LIKE ?) LIMIT ?;"
 
 	var members []*Member
 

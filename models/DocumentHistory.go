@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/mindoc-org/mindoc/utils/sqltil"
 	"time"
 
 	"github.com/beego/beego/v2/client/orm"
@@ -165,7 +166,7 @@ func (m *DocumentHistory) FindToPager(docId, pageIndex, pageSize int) (docs []*D
 FROM md_document_history AS history
 LEFT JOIN md_members AS m1 ON history.member_id = m1.member_id
 LEFT JOIN md_members AS m2 ON history.modify_at = m2.member_id
-WHERE history.document_id = ? ORDER BY history.history_id DESC LIMIT ?,?;`
+WHERE history.document_id = ? ORDER BY history.history_id DESC ` + sqltil.DBSpecificLimitOffset(o.Driver().Type())
 
 	_, err = o.Raw(sql, docId, offset, pageSize).QueryRows(&docs)
 
